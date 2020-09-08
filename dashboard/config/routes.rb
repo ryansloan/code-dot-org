@@ -494,6 +494,7 @@ Dashboard::Application.routes.draw do
 
       post 'foorm/form_with_library_items', action: :fill_in_library_items, controller: 'foorm'
       get 'foorm/form_questions', action: :get_form_questions, controller: 'foorm'
+      post 'foorm/validate_questions', action: :validate_questions, controller: 'foorm'
     end
   end
 

@@ -53,7 +53,9 @@ class FoormEditor extends React.Component {
       ],
       day: 1,
       is_friday_institute: false,
-      workshop_agenda: 'module1'
+      workshop_agenda: 'module1',
+      formHasValidationError: false,
+      formValidationError: null
     };
   }
 
@@ -102,6 +104,32 @@ class FoormEditor extends React.Component {
         formPreviewQuestions: result
       });
     });
+  };
+
+  validateFoorm = () => {
+    $.ajax({
+      url: '/api/v1/pd/foorm/validate_questions',
+      type: 'post',
+      contentType: 'application/json',
+      processData: false,
+      data: JSON.stringify({
+        form_questions: this.props.formQuestions
+      })
+    })
+      .error(result => {
+        const response = result.responseJSON;
+        console.log(response);
+        this.setState({
+          formHasValidationError: true,
+          formValidationError: response.questions
+        });
+      })
+      .done(result => {
+        this.setState({
+          formHasValidationError: false,
+          formValidationError: null
+        });
+      });
   };
 
   render() {
@@ -208,6 +236,14 @@ class FoormEditor extends React.Component {
               </label>
             </form>
             <Button onClick={this.previewFoorm}>Preview</Button>
+            <Button onClick={this.validateFoorm}>Validate</Button>
+            {this.state.formHasValidationError ? (
+              <div>{`Validation Error Found: ${
+                this.state.formValidationError
+              }`}</div>
+            ) : (
+              <div>No Validation Error Found</div>
+            )}
             {this.state.formPreviewQuestions && (
               // key allows us to force re-render when preview is clicked
               <Foorm

@@ -13,4 +13,14 @@ class Api::V1::Pd::FoormController < ::ApplicationController
     form_questions = JSON.parse(Foorm::Form.where(name: form_name, version: form_version).first&.questions)
     render json: form_questions
   end
+
+  def validate_questions
+    questions = JSON.generate(params[:form_questions].as_json)
+    temp_form = Foorm::Form.new(name: 'sample', version: 0, questions: questions)
+    if temp_form.valid?
+      return render json: {status: 'valid'}
+    else
+      return render json: temp_form.errors.messages, status: 500
+    end
+  end
 end
