@@ -10,6 +10,9 @@ export default class NewWorkshop extends React.Component {
   static contextTypes = {
     router: PropTypes.object.isRequired
   };
+  static propTypes = {
+    mapboxAccessToken: PropTypes.string
+  };
 
   handleSaved = workshop => {
     this.context.router.push(`/workshops/${workshop.id}`);
@@ -19,7 +22,10 @@ export default class NewWorkshop extends React.Component {
     return (
       <div>
         <h2>New Workshop</h2>
-        <WorkshopForm onSaved={this.handleSaved} />
+        <WorkshopForm
+          onSaved={this.handleSaved}
+          mapboxAccessToken={this.props.mapboxAccessToken}
+        />
       </div>
     );
   }

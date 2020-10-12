@@ -54,7 +54,8 @@ export default class WorkshopDashboard extends React.Component {
   static propTypes = {
     permissionList: PropTypes.arrayOf(PropTypes.string).isRequired,
     facilitatorCourses: PropTypes.arrayOf(PropTypes.string).isRequired,
-    regionalPartners: PropTypes.arrayOf(RegionalPartnerShape)
+    regionalPartners: PropTypes.arrayOf(RegionalPartnerShape),
+    mapboxAccessToken: PropTypes.string
   };
 
   constructor(props) {
@@ -124,18 +125,33 @@ export default class WorkshopDashboard extends React.Component {
             <Route
               path="workshops/new"
               breadcrumbs="Workshops,New Workshop"
-              component={NewWorkshop}
+              component={props => (
+                <NewWorkshop
+                  {...props}
+                  mapboxAccessToken={this.props.mapboxAccessToken}
+                />
+              )}
             />
             <Route
               path="workshops/:workshopId"
               breadcrumbs="Workshops,View Workshop"
-              component={Workshop}
+              component={props => (
+                <Workshop
+                  {...props}
+                  mapboxAccessToken={this.props.mapboxAccessToken}
+                />
+              )}
               view="show"
             />
             <Route
               path="workshops/:workshopId/edit"
               breadcrumbs="Workshops,Edit Workshop"
-              component={Workshop}
+              component={props => (
+                <Workshop
+                  {...props}
+                  mapboxAccessToken={this.props.mapboxAccessToken}
+                />
+              )}
               view="edit"
             />
             <Route

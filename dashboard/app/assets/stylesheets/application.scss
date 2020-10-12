@@ -3605,6 +3605,10 @@ html[dir=rtl] {
 }
 
 #mapbox-location-search-container {
+  .mapbox-location-search-container {
+    width: 100%;
+  }
+
   .mapboxgl-ctrl-geocoder {
     min-width: 100%;
     z-index: 2;
@@ -3613,10 +3617,19 @@ html[dir=rtl] {
     font-family: inherit;
     font-size: inherit;
   }
+
   input {
     height: 36px;
     margin: 0;
     border: none;
     padding: 0 34px;
+    &.readOnly {
+      width: 100%;
+    }
+  }
+
+  .mapboxgl-ctrl-geocoder--suggestion {
+    color: $default_text;
+    font-family: $gotham-regular, sans-serif;
   }
 }

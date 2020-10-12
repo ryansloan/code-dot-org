@@ -14,19 +14,38 @@ export default class MapboxLocationSearchField extends React.Component {
     // Note: if mapboxAccessToken is not defined, then nothing will be rendered.
     mapboxAccessToken: PropTypes.string,
     value: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    placeholder: PropTypes.string,
+    readOnly: PropTypes.bool,
+    style: PropTypes.object,
+    className: PropTypes.string,
+    // location type reference - https://docs.mapbox.com/api/search/#data-types
+    locationTypes: PropTypes.array
+  };
+
+  static defaultProps = {
+    locationTypes: [
+      'address',
+      'country',
+      'region',
+      'place',
+      'postcode',
+      'locality',
+      'neighborhood'
+    ]
   };
 
   componentDidMount() {
     // Don't render this mapbox component if this host doesn't have access to mapbox.
-    if (!this.props.mapboxAccessToken) {
+    if (!this.props.mapboxAccessToken || this.props.readOnly) {
       return;
     }
     // eslint-disable-next-line no-undef
     const mapboxGeocoder = new MapboxGeocoder({
       accessToken: this.props.mapboxAccessToken,
-      types: 'country,region,place,postcode,locality,neighborhood',
-      placeholder: i18n.schoolLocationSearchPlaceholder()
+      types: this.props.locationTypes.join(','),
+      placeholder:
+        this.props.placeholder || i18n.schoolLocationSearchPlaceholder()
     });
     mapboxGeocoder.addTo(`#${this.searchContainerRef.id}`);
     mapboxGeocoder.setInput(this.props.value);
@@ -41,7 +60,17 @@ export default class MapboxLocationSearchField extends React.Component {
       <div
         ref={el => (this.searchContainerRef = el)}
         id="mapbox-location-search-container"
-      />
+      >
+        {this.props.readOnly && (
+          <input
+            type={'text'}
+            style={this.props.style}
+            className={`${this.props.className} readOnly`}
+            value={this.props.value}
+            disabled
+          />
+        )}
+      </div>
     );
   }
 }

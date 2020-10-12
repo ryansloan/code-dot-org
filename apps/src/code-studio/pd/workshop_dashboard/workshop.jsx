@@ -31,7 +31,8 @@ export class Workshop extends React.Component {
     route: PropTypes.shape({
       view: PropTypes.string
     }).isRequired,
-    permission: PermissionPropType.isRequired
+    permission: PermissionPropType.isRequired,
+    mapboxAccessToken: PropTypes.string
   };
 
   constructor(props) {
@@ -159,7 +160,7 @@ export class Workshop extends React.Component {
       return <p>No workshop found</p>;
     }
 
-    const {params, permission, route} = this.props;
+    const {params, permission, route, mapboxAccessToken} = this.props;
     const {workshopId} = params;
     const isWorkshopAdmin = permission.has(WorkshopAdmin);
     const {workshop, enrollments, loadingEnrollments} = this.state;
@@ -205,6 +206,7 @@ export class Workshop extends React.Component {
           workshopState={workshopState}
           isWorkshopAdmin={isWorkshopAdmin}
           onWorkshopSaved={this.handleWorkshopSaved}
+          mapboxAccessToken={mapboxAccessToken}
         />
         <MetadataFooter createdAt={created_at} />
       </Grid>
