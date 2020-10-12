@@ -58,7 +58,7 @@ module Geocoder
       private
 
       def mapbox_context(name)
-        data['context'].map do |c|
+        context.map do |c|
           c if c['id'] =~ Regexp.new(name)
         end&.compact&.first
       end
