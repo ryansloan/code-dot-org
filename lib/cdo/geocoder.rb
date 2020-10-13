@@ -134,7 +134,10 @@ def geocoder_config
       config[:use_https] = true
       config[:api_key] = CDO.mapbox_access_token
     end
-    config[:freegeoip] = {host: CDO.freegeoip_host} if CDO.freegeoip_host
+    config[:ip_lookup] = :freegeoip
+    if CDO.freegeoip_host
+      config[:freegeoip] = {host: CDO.freegeoip_host}
+    end
   end
 end
 
