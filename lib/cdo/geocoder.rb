@@ -58,7 +58,7 @@ module Geocoder
       private
 
       def mapbox_context(name)
-        data['context'].map do |c|
+        context.map do |c|
           c if c['id'] =~ Regexp.new(name)
         end&.compact&.first
       end
@@ -134,7 +134,10 @@ def geocoder_config
       config[:use_https] = true
       config[:api_key] = CDO.mapbox_access_token
     end
-    config[:freegeoip] = {host: CDO.freegeoip_host} if CDO.freegeoip_host
+    config[:ip_lookup] = :freegeoip
+    if CDO.freegeoip_host
+      config[:freegeoip] = {host: CDO.freegeoip_host}
+    end
   end
 end
 
