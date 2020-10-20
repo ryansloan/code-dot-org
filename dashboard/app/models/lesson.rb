@@ -36,6 +36,7 @@ class Lesson < ActiveRecord::Base
   has_many :script_levels, -> {order(:chapter)}, foreign_key: 'stage_id', dependent: :destroy
   has_many :levels, through: :script_levels
   has_and_belongs_to_many :resources, join_table: :lessons_resources
+  has_many :objectives
 
   has_one :plc_learning_module, class_name: 'Plc::LearningModule', inverse_of: :lesson, foreign_key: 'stage_id', dependent: :destroy
   has_and_belongs_to_many :standards, foreign_key: 'stage_id'
@@ -307,7 +308,8 @@ class Lesson < ActiveRecord::Base
       overview: overview || '',
       announcements: announcements,
       purpose: purpose || '',
-      preparation: preparation || ''
+      preparation: preparation || '',
+      activities: @lesson.lesson_activities.map(&:summarize_for_lesson_show)
     }
   end
 
