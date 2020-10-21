@@ -9,10 +9,16 @@ module Geocoder
         {}.tap do |results|
           results['location_p'] = "#{latitude},#{longitude}" if latitude && longitude
           %w(street_number route street_address city state state_code country country_code postal_code).each do |component_name|
-            component = send component_name
+            component = try component_name
             results["#{prefix}#{component_name}_s"] = component unless component.nil_or_empty?
           end
         end
+      end
+
+      # Left over from when we used to use Google as our Geocoder service. This should be removed once none of our code
+      # depends on it.
+      def formatted_address
+        address
       end
 
       def relevance
@@ -60,34 +66,8 @@ module Geocoder
         data['place_name']
       end
 
-      def formatted_address
-        data['place_name']
-      end
-
       def relevance
         data['relevance']
-      end
-
-      # This following methods should be removed once the Geocoder gem is updated
-      # https://github.com/code-dot-org/code-dot-org/pull/37192/files
-      def city
-        mapbox_context('place')&.[]('text')
-      end
-
-      def state
-        mapbox_context('region')&.[]('text')
-      end
-
-      def postal_code
-        mapbox_context('postcode')&.[]('text')
-      end
-
-      def country
-        mapbox_context('country')&.[]('text')
-      end
-
-      def neighborhood
-        mapbox_context('neighborhood')&.[]('text')
       end
 
       private
@@ -96,12 +76,6 @@ module Geocoder
         context.map do |c|
           c if c['id'] =~ Regexp.new(name)
         end&.compact&.first
-      end
-
-      # This should removed once the Geocoder gem is updated
-      # https://github.com/code-dot-org/code-dot-org/pull/37192/files
-      def context
-        Array(data['context'])
       end
     end
     Mapbox.send :prepend, CdoResultAdapter
@@ -178,7 +152,10 @@ def geocoder_config
       config[:use_https] = true
       config[:api_key] = CDO.mapbox_access_token
     end
-    config[:freegeoip] = {host: CDO.freegeoip_host} if CDO.freegeoip_host
+    if CDO.freegeoip_host
+      config[:ip_lookup] = :freegeoip
+      config[:freegeoip] = {host: CDO.freegeoip_host}
+    end
   end
 end
 
